@@ -1,101 +1,79 @@
-import Image from "next/image";
+'use client'
+import { ChangeEvent, useState } from 'react'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+export default function TodoApp() {
+    const [taskList, setTaskList] = useState<{ name: string; completed: boolean }[]>([])
+    const [taskName, setTaskName] = useState("")
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    const handleAddTask = () => {
+        if (taskName.trim() !== "") {
+            setTaskList([...taskList, { name: taskName, completed: false }])
+            setTaskName("")
+        }
+    }
+
+    const handleTaskName = (e: ChangeEvent<HTMLInputElement>) => {
+        setTaskName(e.target.value)
+    }
+
+    const handleDeleteTask = (index: number) => {
+        setTaskList(taskList.filter((_, i) => i !== index))
+    }
+
+    const toggleTaskCompletion = (index: number) => {
+        setTaskList(
+            taskList.map((task, i) =>
+                i === index ? { ...task, completed: !task.completed } : task
+            )
+        )
+    }
+
+    return (
+        <div className="grid place-items-center h-screen bg-gradient-to-br from-gray-900 via-blue-800 to-gray-900">
+
+            <div className="bg-white rounded-lg shadow-lg p-10 space-y-8 w-[400px]">
+
+                <h1 className="text-2xl font-bold text-center text-gray-800">To-Do List</h1>
+
+                <div className="flex items-center space-x-3">
+
+                    <input type="text" value={taskName} onChange={handleTaskName} placeholder="Enter a task"
+                        className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+
+                    <button
+                        onClick={handleAddTask}
+                        className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
+                        Add
+                    </button>
+                    
+                </div>
+                <ul className="space-y-4">
+
+                    {taskList.map((task, index) => (
+
+                        <li key={index}
+                            className={`flex justify-between items-center px-4 py-3 rounded-lg shadow-sm ${
+                                task.completed ? "bg-green-100 line-through" : "bg-gray-100" }`}>
+
+                            <div
+                                className={`flex-grow cursor-pointer break-words overflow-hidden text-ellipsis ${
+                                    task.completed ? "text-gray-500" : "text-gray-800" }`}
+
+                                style={{ wordBreak: "break-word", whiteSpace: "normal", maxWidth: "calc(100% - 50px)", }}
+
+                                onClick={() => toggleTaskCompletion(index)}>
+                                {task.name}
+                            </div>
+
+                            <button
+                                onClick={() => handleDeleteTask(index)}
+                                className="px-2 py-1 text-red-500 hover:text-white hover:bg-red-500 rounded-lg transition">
+                                ✕
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    )
 }
